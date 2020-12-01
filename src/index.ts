@@ -22,11 +22,11 @@ const dumpDb = (
 }
 
 const dumpDatabase = (
+  frequency: string = '0 0 * * *',
   host: string = 'localhost',
   port: string = '27017',
   outPath: string = './../../dumps/',
   dbName: string = '',
-  frequency: string = '0 0 * * *',
   nbSaved: number = 14
 ) => {
   cron.schedule(frequency, dumpDb(host, port, outPath, dbName, nbSaved));
