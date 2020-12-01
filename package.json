@@ -1,0 +1,21 @@
+{
+  "name": "node-mongo-dump",
+  "description": "",
+  "version": "0.0.0",
+  "homepage": "",
+  "main": "src",
+  "author": {
+    "name": "Vincent",
+    "email": "vcarrere33@gmail.com"
+  },
+  "contributors": [],
+  "bugs": {},
+  "scripts": {
+    "start": ""
+  },
+  "dependencies": {
+    "@types/node": "14.14.10",
+    "child_process": "1.0.2",
+    "node": "15.3.0"
+  }
+}
