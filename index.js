@@ -1,3 +1,1 @@
-import nodeMongoDump from "src/index";
-
-module.exports = nodeMongoDump;
+module.exports = require("src/index");
