@@ -21,7 +21,7 @@ const dumpDb = (
   }
 }
 
-const dumpDatabase = (
+export default (
   frequency: string = '0 0 * * *',
   host: string = 'localhost',
   port: string = '27017',
@@ -30,6 +30,4 @@ const dumpDatabase = (
   nbSaved: number = 14
 ) => {
   cron.schedule(frequency, dumpDb(host, port, outPath, dbName, nbSaved));
-}
-
-module.exports = dumpDatabase;
+};

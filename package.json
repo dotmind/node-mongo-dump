@@ -2,7 +2,7 @@
   "name": "node-mongo-dump",
   "version": "0.0.1",
   "description": "An npm package to generate database dump with customizable node cron",
-  "main": "src/index.ts",
+  "main": "index.js",
   "type": "module",
   "dependencies": {
     "@types/node-cron": "2.0.3",
