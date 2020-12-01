@@ -1,21 +1,35 @@
 {
   "name": "node-mongo-dump",
-  "description": "",
-  "version": "0.0.0",
-  "homepage": "",
-  "main": "src",
-  "author": {
-    "name": "Vincent",
-    "email": "vcarrere33@gmail.com"
-  },
-  "contributors": [],
-  "bugs": {},
-  "scripts": {
-    "start": ""
-  },
+  "version": "0.0.1",
+  "description": "An npm package to generate database dump with customizable node cron",
+  "main": "src/",
   "dependencies": {
-    "@types/node": "14.14.10",
+    "@types/node-cron": "2.0.3",
     "child_process": "1.0.2",
-    "node": "15.3.0"
-  }
+    "node-bin-setup": "1.0.6",
+    "node-cron": "2.0.3",
+    "opencollective-postinstall": "2.0.3",
+    "tz-offset": "0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "14.14.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dotmind/node-mongo-dump.git"
+  },
+  "keywords": [
+    "node",
+    "mongo",
+    "dump"
+  ],
+  "author": "Vincent",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dotmind/node-mongo-dump/issues"
+  },
+  "homepage": "https://github.com/dotmind/node-mongo-dump#readme"
 }
