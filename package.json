@@ -1,6 +1,6 @@
 {
   "name": "node-mongo-dump",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "An npm package to generate database dump with customizable node cron",
   "main": "dist/index.js",
   "dependencies": {
