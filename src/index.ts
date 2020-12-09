@@ -30,10 +30,13 @@ const dumpDb = (
     if (files.length >= nbSaved) {
       fs.rmSync(`${outPath}${files[0]}`);
     }
+    const fileDbName = getFileName(dbName)
+    const fileDbPath = `${outPath}${fileDbName}`
+
     const mongodump = spawn('mongodump', [
       `--host="${host}"`,
       `--port=${port}`,
-      `--out=${outPath}${getFileName(dbName)}`,
+      `--out=${fileDbPath}`,
       `--db=${dbName}`
     ]);
 
@@ -50,15 +53,13 @@ const dumpDb = (
     }
 
     mongodump.on('close', (code) => {
-      if (withClose) {
-        console.log(`child process exited with code ${code}`);
-      }
-      compressing.tar.compressDir(`${outPath}${getFileName(dbName)}`, `${outPath}${getFileName(dbName)}.tar`)
+      if (withClose) console.log(`child process exited with code ${code}`);
+      compressing.tar.compressDir(fileDbPath, `${fileDbPath}.tar`)
         .then(() => {
-          compressing.gzip.compressFile(`${outPath}${getFileName(dbName)}.tar`, `${outPath}${getFileName(dbName)}.tar.gzip`)
+          compressing.gzip.compressFile(`${fileDbPath}.tar`, `${fileDbPath}.tar.gzip`)
           .then(() => {
-            fs.rmSync(`${outPath}${getFileName(dbName)}.tar`);
-            fs.rmdir(`${outPath}${getFileName(dbName)}`, { recursive: true }, () => { });
+            fs.rmSync(`${fileDbPath}.tar`);
+            fs.rmdir(fileDbPath, { recursive: true }, () => { });
           })
           .catch((e) => console.log(e));
         })
@@ -70,12 +71,12 @@ const dumpDb = (
 }
 
 type Arguments = {
+  dbName: string;
   frequency?: string;
   nbSaved?: number;
   host?: string;
   port?: string;
   outPath?: string;
-  dbName: string;
   withStdout?: boolean;
   withStderr?: boolean;
   withClose?: boolean;
