@@ -69,16 +69,28 @@ const dumpDb = (
   }
 }
 
-module.exports = (
-  frequency: string = '0 0 * * *',
-  nbSaved: number = 14,
-  host: string = 'localhost',
-  port: string = '27017',
-  outPath: string = './../../dumps/',
-  dbName: string = '',
-  withStdout: boolean = false,
-  withStderr: boolean = false,
-  withClose: boolean = false
-) => {
+type Arguments = {
+  frequency?: string;
+  nbSaved?: number;
+  host?: string;
+  port?: string;
+  outPath?: string;
+  dbName: string;
+  withStdout?: boolean;
+  withStderr?: boolean;
+  withClose?: boolean;
+}
+
+module.exports = ({
+  dbName,
+  frequency = '0 0 * * *',
+  nbSaved = 14,
+  host = 'localhost',
+  port = '27017',
+  outPath = './../../dumps/',
+  withStdout = false,
+  withStderr = false,
+  withClose = false
+}: Arguments) => {
   cron.schedule(frequency, dumpDb(host, port, outPath, dbName, nbSaved, withStdout, withStderr, withClose));
 }
