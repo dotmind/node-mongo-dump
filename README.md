@@ -1,6 +1,6 @@
 # node-mongo-dump
-
-[![Version](https://img.shields.io/npm/v/node-mongo-dump?color=brightgreen)](https://www.npmjs.com/package/node-mongo-dump)
+[![Version](https://img.shields.io/npm/v/@dotmind/node-mongo-dump?color=brightgreen)](https://www.npmjs.com/package/@dotmind/node-mongo-dump)
+> version 1 🚀
 
 ## Menu
 
