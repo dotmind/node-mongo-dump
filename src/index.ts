@@ -3,6 +3,7 @@ import * as cron from 'node-cron';
 import * as fs from 'fs';
 import * as compressing from 'compressing';
 import * as path from 'path';
+import * as semver from 'semver';
 
 const getDateWithTwoDigit = (date: number) => `0${date}`.slice(-2);
 
@@ -85,9 +86,15 @@ const dumpDb = ({
                 }
               ])
               fs.unlinkSync(`${fileDbPath}.tar`);
-              fs.rmdir(fileDbPath, { recursive: true }, () => {
-                console.log(`🧹 ${fileDbPath}.tar successfully cleaned`);
-              });
+              if (semver.gt(process.version, 'v12.10.0')) {
+                fs.rmdir(fileDbPath, { recursive: true }, () => {
+                  console.log(`🧹 ${fileDbPath}.tar successfully cleaned`);
+                });
+              } else {
+                fs.rmdir(fileDbPath, () => {
+                  console.log(`🧹 ${fileDbPath}.tar successfully cleaned`);
+                });
+              }
             })
             .catch((e) => console.log(e));
         })
