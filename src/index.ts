@@ -40,12 +40,12 @@ const dumpDb = ({
   withClose = false,
 }: Arguments) => () => {
   try {
-    const fullPath = path.resolve(outPath)
+    const fullPath = path.resolve(outPath);
     if (!fs.existsSync(fullPath)) {
       fs.mkdirSync(fullPath);
     }
     const filter = new RegExp(`^${dbName}`);
-    const files = fs.readdirSync(fullPath).filter((path: string) => filter.test(path));
+    const files = fs.readdirSync(fullPath).filter((pathFile: string) => filter.test(pathFile));
     if (files.length >= nbSaved) {
       fs.unlinkSync(path.join(fullPath, files[0]));
     }
@@ -79,12 +79,12 @@ const dumpDb = ({
           compressing.gzip
             .compressFile(`${fileDbPath}.tar`, `${fileDbPath}.tar.gzip`)
             .then(() => {
-              console.log('💾  Successfully saved')
+              console.log('💾  Successfully saved');
               console.table([
                 {
                   file: fileDbName,
-                }
-              ])
+                },
+              ]);
               fs.unlinkSync(`${fileDbPath}.tar`);
               if (semver.gt(process.version, 'v12.10.0')) {
                 fs.rmdir(fileDbPath, { recursive: true }, () => {
@@ -123,8 +123,8 @@ export = function nodeMongoDump({
       nbSaved,
       host,
       port,
-      outPath
-    }
-  ])
+      outPath,
+    },
+  ]);
   cron.schedule(frequency, dumpDb({ host, port, outPath, dbName, nbSaved, withStdout, withStderr, withClose }));
 };

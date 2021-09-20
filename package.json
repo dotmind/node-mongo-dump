@@ -1,6 +1,6 @@
 {
   "name": "@dotmind/node-mongo-dump",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An npm package to generate database dump with customizable node cron",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -42,9 +42,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dotmind/node-mongo-dump.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   },
   "keywords": [
     "node",

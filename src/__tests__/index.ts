@@ -1,8 +1,11 @@
-const nodeMongoDump = require('@dotmind/node-mongo-dump')
+const nodeMongoDump = require('../index');
 
-nodeMongoDump({
-  dbName: 'node-mongo-dump-test',
-  frequency: '* * * * *',
-  nbSaved: 5,
-  outPath: './dumps/'
-})
+test('adds 1 + 2 to equal 3', () => {
+  const result = nodeMongoDump({
+      dbName: 'node-mongo-dump-test',
+      frequency: '* * * * *',
+      nbSaved: 5,
+      outPath: './dumps/',
+    })
+  expect(result).toBeUndefined();
+});
