@@ -91,9 +91,20 @@ const dumpDb = ({
                   console.log(`🧹 ${fileDbPath}.tar successfully cleaned`);
                 });
               } else {
-                fs.rmdir(fileDbPath, () => {
-                  console.log(`🧹 ${fileDbPath}.tar successfully cleaned`);
-                });
+                var deleteFolderRecursive = function (folderPath: string) {
+                  if (fs.existsSync(folderPath)) {
+                    fs.readdirSync(folderPath).forEach(function (file, index) {
+                      var curPath = path + "/" + file;
+                      if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                        deleteFolderRecursive(curPath);
+                      } else { // delete file
+                        fs.unlinkSync(curPath);
+                      }
+                    });
+                    fs.rmdirSync(folderPath);
+                  }
+                };
+                deleteFolderRecursive(fileDbPath);
               }
             })
             .catch((e) => console.log(e));
