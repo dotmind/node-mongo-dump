@@ -94,7 +94,7 @@ const dumpDb = ({
                 const deleteFolderRecursive = (folderPath: string) => {
                   if (fs.existsSync(folderPath)) {
                     fs.readdirSync(folderPath).forEach((file, index) => {
-                      const curPath = path + '/' + file;
+                      const curPath = folderPath + '/' + file;
                       if (fs.lstatSync(curPath).isDirectory()) {
                         // recurse
                         deleteFolderRecursive(curPath);
@@ -107,6 +107,7 @@ const dumpDb = ({
                   }
                 };
                 deleteFolderRecursive(fileDbPath);
+                console.log(`🧹 ${fileDbPath} successfully cleaned`);
               }
             })
             .catch((e) => console.log(e));
