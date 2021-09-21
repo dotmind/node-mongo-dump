@@ -91,13 +91,15 @@ const dumpDb = ({
                   console.log(`🧹 ${fileDbPath}.tar successfully cleaned`);
                 });
               } else {
-                var deleteFolderRecursive = function (folderPath: string) {
+                const deleteFolderRecursive = (folderPath: string) => {
                   if (fs.existsSync(folderPath)) {
-                    fs.readdirSync(folderPath).forEach(function (file, index) {
-                      var curPath = path + "/" + file;
-                      if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                    fs.readdirSync(folderPath).forEach((file, index) => {
+                      const curPath = path + '/' + file;
+                      if (fs.lstatSync(curPath).isDirectory()) {
+                        // recurse
                         deleteFolderRecursive(curPath);
-                      } else { // delete file
+                      } else {
+                        // delete file
                         fs.unlinkSync(curPath);
                       }
                     });
