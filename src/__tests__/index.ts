@@ -1,11 +1,19 @@
-const nodeMongoDump = require('../index');
+import dumpDb from '../dumpDb';
 
-test('adds 1 + 2 to equal 3', () => {
-  const result = nodeMongoDump({
+test('Dump test', async () => {
+  const args = {
+    host: 'localhost',
+    port: '27017',
     dbName: 'node-mongo-dump-test',
     frequency: '* * * * *',
     nbSaved: 5,
     outPath: './dumps/',
-  });
-  expect(result).toBeUndefined();
+    withStdout: true,
+    withStderr: true,
+    withClose: true,
+  };
+
+  const filePath = await dumpDb(args)();
+  console.log(filePath)
+  expect(filePath).toBeUndefined();
 });
