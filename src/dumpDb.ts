@@ -28,7 +28,7 @@ const dumpDb = ({
   withStderr = false,
   withClose = false,
 }: Arguments) => () => {
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<string | Error>((resolve, reject) => {
     try {
       const fullPath = path.resolve(outPath);
       if (!fs.existsSync(fullPath)) {
@@ -41,95 +41,85 @@ const dumpDb = ({
       }
       const fileDbName = getFileName(dbName);
       const fileDbPath = path.join(fullPath, fileDbName);
-  
+
       const mongodump = spawn('mongodump', [
         `--host="${host}"`,
         `--port=${port}`,
         `--out=${fileDbPath}`,
         `--db=${dbName}`,
       ]);
-  
+
       if (withStdout) {
         mongodump.stdout.on('data', (data) => {
           console.log(`stdout: ${data}`);
         });
       }
-  
+
       if (withStderr) {
         mongodump.stderr.on('data', (data) => {
           console.error(`stderr: ${data}`);
         });
       }
-  
+
       mongodump.on('close', (code) => {
         if (withClose) console.log(`child process exited with code ${code}`);
 
-        // if (code === 0) {
+        compressing.tar
+          .compressDir(fileDbPath, `${fileDbPath}.tar`)
+          .then(() => {
+            compressing.gzip
+              .compressFile(`${fileDbPath}.tar`, `${fileDbPath}.tar.gzip`)
+              .then(() => {
+                console.log('💾  Successfully saved');
+                console.table([
+                  {
+                    file: fileDbName,
+                  },
+                ]);
+                fs.unlinkSync(`${fileDbPath}.tar`);
+                if (semver.gt(process.version, 'v12.10.0')) {
+                  fs.rmdir(fileDbPath, { recursive: true }, () => {
+                    console.log(`🧹 ${fileDbPath}.tar successfully cleaned`);
+                    resolve(fileDbPath);
+                  });
+                } else {
+                  const deleteFolderRecursive = (folderPath: string) => {
+                    if (fs.existsSync(folderPath)) {
+                      fs.readdirSync(folderPath).forEach((file, index) => {
+                        const curPath = folderPath + '/' + file;
+                        if (fs.lstatSync(curPath).isDirectory()) {
+                          // recurse
+                          deleteFolderRecursive(curPath);
+                        } else {
+                          // delete file
+                          fs.unlinkSync(curPath);
+                        }
+                      });
+                      fs.rmdirSync(folderPath);
+                    }
+                  };
+                  deleteFolderRecursive(fileDbPath);
+                  console.log(`🧹 ${fileDbPath} successfully cleaned`);
+                  resolve(fileDbPath);
+                }
+              })
+              .catch((e) => {
+                console.log(e);
+                reject(e);
+              });
+          })
+          .catch((e) => {
+            fs.unlinkSync(`${fileDbPath}.tar`);
 
-        fs.access(fileDbPath, function(error) {
-          if (error) {
-            console.log("Directory does not exist.", error);
-            reject(error);
-          } else {
-            console.log("Directory exists.")
-          }
-        })
-
-        // compressing.tar.compressDir(fileDbPath, `${fileDbPath}.tar`)
-        //   .then(() => {
-        //     compressing.gzip
-        //       .compressFile(`${fileDbPath}.tar`, `${fileDbPath}.tar.gzip`)
-        //       .then(() => {
-        //         console.log("ee")
-        //       //   console.log('💾  Successfully saved');
-        //       //   console.table([
-        //       //     {
-        //       //       file: fileDbName,
-        //       //     },
-        //       //   ]);
-        //       //   fs.unlinkSync(`${fileDbPath}.tar`);
-        //       //   if (semver.gt(process.version, 'v12.10.0')) {
-        //       //     fs.rmdir(fileDbPath, { recursive: true }, () => {
-        //       //       console.log(`🧹 ${fileDbPath}.tar successfully cleaned`);
-        //       //     });
-        //       //   } else {
-        //       //     const deleteFolderRecursive = (folderPath: string) => {
-        //       //       if (fs.existsSync(folderPath)) {
-        //       //         fs.readdirSync(folderPath).forEach((file, index) => {
-        //       //           const curPath = folderPath + '/' + file;
-        //       //           if (fs.lstatSync(curPath).isDirectory()) {
-        //       //             // recurse
-        //       //             deleteFolderRecursive(curPath);
-        //       //           } else {
-        //       //             // delete file
-        //       //             fs.unlinkSync(curPath);
-        //       //           }
-        //       //         });
-        //       //         fs.rmdirSync(folderPath);
-        //       //       }
-        //       //     };
-        //       //     deleteFolderRecursive(fileDbPath);
-        //       //     console.log(`🧹 ${fileDbPath} successfully cleaned`);
-        //       //   }
-
-        //       //   resolve(fileDbPath);
-        //       })
-        //       .catch((e) => {
-        //         console.log(e)
-        //         reject(e);
-        //       });
-        //   })
-        //   .catch((e) => {
-        //     console.log(e)
-        //     reject(e);
-        //   });
+            console.log(e);
+            reject(e);
+          });
       });
-    } catch (error) {
-      // console.log('here')
-      // console.log(error);
-      reject(error);
+    } catch (e) {
+      console.log(e);
+      reject(e);
     }
-  })
+  });
 };
 
 export default dumpDb;

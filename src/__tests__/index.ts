@@ -1,4 +1,5 @@
 import dumpDb from '../dumpDb';
+import * as fs from 'fs';
 
 test('Dump test', async () => {
   const args = {
@@ -8,12 +9,13 @@ test('Dump test', async () => {
     frequency: '* * * * *',
     nbSaved: 5,
     outPath: './dumps/',
-    withStdout: true,
-    withStderr: true,
-    withClose: true,
+    withStdout: false,
+    withStderr: false,
+    withClose: false,
   };
 
   const filePath = await dumpDb(args)();
-  console.log(filePath)
-  expect(filePath).toBeUndefined();
+  const isSaved = fs.existsSync(`${filePath}.tar.gzip`);
+
+  expect(isSaved).toBeTruthy();
 });
