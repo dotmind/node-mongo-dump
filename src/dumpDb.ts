@@ -28,7 +28,7 @@ const dumpDb = ({
   withStderr = false,
   withClose = false,
 }: Arguments) => () => {
-  return new Promise<string | Error>((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     try {
       const fullPath = path.resolve(outPath);
       if (!fs.existsSync(fullPath)) {
