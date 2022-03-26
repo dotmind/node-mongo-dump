@@ -37,7 +37,22 @@ dumpDb({
   withClose: false,
 });
 ```
-And then... That's it, you're Ready to go 🚀
+
+And you can use await for a sync usage. The dumpDb function will return the path where the file is saved.
+
+```javascript
+const file = await dumpDb({
+  dbName: 'dbName',
+  host: 'localhost',
+  port: '27017',
+  nbSaved: 5,
+  outPath: './dumps/',
+  withStdout: false,
+  withStderr: false,
+  withClose: false,
+});
+```
+And then... That's it, you're ready to go 🚀
 
 ## 📖 Options
 
@@ -66,4 +81,9 @@ And then... That's it, you're Ready to go 🚀
 | outPath    | false     | string  | `'./../../dumps/'` | The directory where you want to save the dumps.                                                                    |
 | withStdout | false     | boolean | `false`            | Variable to log the output of mongodump command                                                                    |
 | withStderr | false     | boolean | `false`            | Variable to log the errors of mongodump command                                                                    |
-| withClose  | false     | boolean | `false`            | Variable to log the ouendtput of mongodump command                                                                 |
+| withClose  | false     | boolean | `false`            | Variable to log the ouendtput of mongodump command              
+
+Return the path where the file is saved.
+
+## License
+[ISC](https://choosealicense.com/licenses/isc/)
