@@ -3,7 +3,7 @@ import dumpDb from './dumpDb';
 
 import { Arguments } from './types';
 
-export = function nodeMongoDump({
+const nodeMongoDump = ({
   dbName,
   frequency = '0 0 * * *',
   nbSaved = 14,
@@ -13,7 +13,7 @@ export = function nodeMongoDump({
   withStdout = false,
   withStderr = false,
   withClose = false,
-}: Arguments) {
+}: Arguments) => {
   console.table([
     {
       dbName,
@@ -26,3 +26,6 @@ export = function nodeMongoDump({
   ]);
   cron.schedule(frequency, dumpDb({ host, port, outPath, dbName, nbSaved, withStdout, withStderr, withClose }));
 };
+
+export { default as dumpDb } from './dumpDb';
+export default nodeMongoDump;
