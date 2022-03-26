@@ -1,4 +1,4 @@
-import dumpDb from '../dumpDb';
+import * as dumpDb from '../dumpDb';
 import * as fs from 'fs';
 
 const dbName = 'ice';
@@ -16,7 +16,7 @@ test('Dump test', async () => {
     withClose: false,
   };
 
-  const filePath = await dumpDb(args)();
+  const filePath = await dumpDb(args);
   const isSaved = fs.existsSync(`${filePath}.tar.gzip`);
 
   expect(isSaved).toBeTruthy();
@@ -35,7 +35,7 @@ test('Dump withStdout', async () => {
     withClose: false,
   };
 
-  const filePath = await dumpDb(args)();
+  const filePath = await dumpDb(args);
   const isSaved = fs.existsSync(`${filePath}.tar.gzip`);
 
   expect(isSaved).toBeTruthy();
@@ -54,7 +54,7 @@ test('Dump withStderr', async () => {
     withClose: false,
   };
 
-  const filePath = await dumpDb(args)();
+  const filePath = await dumpDb(args);
   const isSaved = fs.existsSync(`${filePath}.tar.gzip`);
 
   expect(isSaved).toBeTruthy();
@@ -73,7 +73,7 @@ test('Dump withClose', async () => {
     withClose: true,
   };
 
-  const filePath = await dumpDb(args)();
+  const filePath = await dumpDb(args);
   const isSaved = fs.existsSync(`${filePath}.tar.gzip`);
 
   expect(isSaved).toBeTruthy();

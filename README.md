@@ -21,7 +21,27 @@ nodeMongoDump({
 });
 ```
 
+You can use the dumpDb function to dump the database once
+
+```javascript
+const dumpDb = require('@dotmind/node-mongo-dump/lib/dumpDb');
+
+dumpDb({
+  dbName: 'dbName',
+  host: 'localhost',
+  port: '27017',
+  nbSaved: 5,
+  outPath: './dumps/',
+  withStdout: false,
+  withStderr: false,
+  withClose: false,
+});
+```
+And then... That's it, you're Ready to go 🚀
+
 ## 📖 Options
+
+### nodeMongoDump
 
 | Arguments  | Required  | type    | Default Value      | Commentary                                                                                                         |
 | ---------- | --------- | ------- | ------------------ | ------------------------------------------------------------------------------------------------------------------ |
@@ -35,3 +55,15 @@ nodeMongoDump({
 | withStderr | false     | boolean | `false`            | Variable to log the errors of mongodump command                                                                    |
 | withClose  | false     | boolean | `false`            | Variable to log the ouendtput of mongodump command                                                                 |
 
+### dumpDb
+
+| Arguments  | Required  | type    | Default Value      | Commentary                                                                                                         |
+| ---------- | --------- | ------- | ------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| dbName*    | true      | string  |                    | Your database name                                                                                                 |
+| nbSaved    | false     | number  | `14`               | The number of dumps you want to keep. If you reach the nbSaved, it will delete the oldest before saving a new one. |
+| host       | false     | string  | `'localhost'`      | Your mongodb host.                                                                                                 |
+| port       | false     | string  | `'27017'`          | Your mongodb port.                                                                                                 |
+| outPath    | false     | string  | `'./../../dumps/'` | The directory where you want to save the dumps.                                                                    |
+| withStdout | false     | boolean | `false`            | Variable to log the output of mongodump command                                                                    |
+| withStderr | false     | boolean | `false`            | Variable to log the errors of mongodump command                                                                    |
+| withClose  | false     | boolean | `false`            | Variable to log the ouendtput of mongodump command                                                                 |

@@ -27,7 +27,7 @@ const dumpDb = ({
   withStdout = false,
   withStderr = false,
   withClose = false,
-}: Arguments) => () => {
+}: Arguments) => {
   return new Promise<string>((resolve, reject) => {
     try {
       const fullPath = path.resolve(outPath);

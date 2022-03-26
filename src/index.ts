@@ -13,6 +13,19 @@ export = function nodeMongoDump ({
   withStderr = false,
   withClose = false,
 }: Arguments) {
+  const dump = () => {
+    dumpDb({
+      dbName,
+      nbSaved,
+      host,
+      port,
+      outPath,
+      withStdout,
+      withStderr,
+      withClose,
+    });
+  }
+
   console.table([
     {
       dbName,
@@ -23,5 +36,5 @@ export = function nodeMongoDump ({
       outPath,
     },
   ]);
-  cron.schedule(frequency, dumpDb({ host, port, outPath, dbName, nbSaved, withStdout, withStderr, withClose }));
+  cron.schedule(frequency, dump);
 };
