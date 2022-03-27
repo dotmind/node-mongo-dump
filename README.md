@@ -1,9 +1,14 @@
 # node-mongo-dump
 
+## Menu
+  * [💻 Installation](#installation)
+  * [🔨 Usage](#usage)
+  * [📖 Options](#options)
+  * [📜 License](#license)
+
 Backup your MongoDB database on a specific frequency using mongodump.
 
 [![Version](https://img.shields.io/npm/v/@dotmind/node-mongo-dump?color=brightgreen)](https://www.npmjs.com/package/@dotmind/node-mongo-dump)
-> version 1 🚀
 
 ## 💻 Installation
 
@@ -56,7 +61,6 @@ And then... That's it, you're ready to go 🚀
 
 ## 📖 Options
 
-### nodeMongoDump
 
 | Arguments  | Required  | type    | Default Value      | Commentary                                                                                                         |
 | ---------- | --------- | ------- | ------------------ | ------------------------------------------------------------------------------------------------------------------ |
@@ -85,5 +89,5 @@ And then... That's it, you're ready to go 🚀
 
 Return the path where the file is saved.
 
-## License
+## 📜 License
 [ISC](https://choosealicense.com/licenses/isc/)
