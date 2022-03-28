@@ -1,125 +1,24 @@
-import { spawn } from 'child_process';
+/**
+ * Copyright (C) 2022 Dotmind
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 import * as cron from 'node-cron';
-import * as fs from 'fs';
-import * as compressing from 'compressing';
-import * as path from 'path';
-import * as semver from 'semver';
+import * as dumpDb from './dumpDb';
+import { Arguments } from './types';
 
-const getDateWithTwoDigit = (date: number) => `0${date}`.slice(-2);
-
-const getFileName = (dbName?: string) => {
-  const now = new Date();
-  const prefix = dbName ? `${dbName}-` : '';
-  return `${prefix}${now.getFullYear()}-${getDateWithTwoDigit(now.getMonth() + 1)}-${getDateWithTwoDigit(
-    now.getDate() + 1,
-  )}-${getDateWithTwoDigit(now.getHours())}-${getDateWithTwoDigit(now.getMinutes())}-${getDateWithTwoDigit(
-    now.getSeconds(),
-  )}`;
-};
-
-type Arguments = {
-  dbName: string;
-  frequency?: string;
-  nbSaved?: number;
-  host?: string;
-  port?: string;
-  outPath?: string;
-  withStdout?: boolean;
-  withStderr?: boolean;
-  withClose?: boolean;
-};
-
-const dumpDb = ({
-  dbName,
-  nbSaved = 14,
-  host = 'localhost',
-  port = '27017',
-  outPath = './../../dumps/',
-  withStdout = false,
-  withStderr = false,
-  withClose = false,
-}: Arguments) => () => {
-  try {
-    const fullPath = path.resolve(outPath);
-    if (!fs.existsSync(fullPath)) {
-      fs.mkdirSync(fullPath);
-    }
-    const filter = new RegExp(`^${dbName}`);
-    const files = fs.readdirSync(fullPath).filter((pathFile: string) => filter.test(pathFile));
-    if (files.length >= nbSaved) {
-      fs.unlinkSync(path.join(fullPath, files[0]));
-    }
-    const fileDbName = getFileName(dbName);
-    const fileDbPath = path.join(fullPath, fileDbName);
-
-    const mongodump = spawn('mongodump', [
-      `--host="${host}"`,
-      `--port=${port}`,
-      `--out=${fileDbPath}`,
-      `--db=${dbName}`,
-    ]);
-
-    if (withStdout) {
-      mongodump.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-      });
-    }
-
-    if (withStderr) {
-      mongodump.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`);
-      });
-    }
-
-    mongodump.on('close', (code) => {
-      if (withClose) console.log(`child process exited with code ${code}`);
-      compressing.tar
-        .compressDir(fileDbPath, `${fileDbPath}.tar`)
-        .then(() => {
-          compressing.gzip
-            .compressFile(`${fileDbPath}.tar`, `${fileDbPath}.tar.gzip`)
-            .then(() => {
-              console.log('💾  Successfully saved');
-              console.table([
-                {
-                  file: fileDbName,
-                },
-              ]);
-              fs.unlinkSync(`${fileDbPath}.tar`);
-              if (semver.gt(process.version, 'v12.10.0')) {
-                fs.rmdir(fileDbPath, { recursive: true }, () => {
-                  console.log(`🧹 ${fileDbPath}.tar successfully cleaned`);
-                });
-              } else {
-                const deleteFolderRecursive = (folderPath: string) => {
-                  if (fs.existsSync(folderPath)) {
-                    fs.readdirSync(folderPath).forEach((file, index) => {
-                      const curPath = folderPath + '/' + file;
-                      if (fs.lstatSync(curPath).isDirectory()) {
-                        // recurse
-                        deleteFolderRecursive(curPath);
-                      } else {
-                        // delete file
-                        fs.unlinkSync(curPath);
-                      }
-                    });
-                    fs.rmdirSync(folderPath);
-                  }
-                };
-                deleteFolderRecursive(fileDbPath);
-                console.log(`🧹 ${fileDbPath} successfully cleaned`);
-              }
-            })
-            .catch((e) => console.log(e));
-        })
-        .catch((e) => console.log(e));
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export = function nodeMongoDump({
+export = function nodeMongoDump ({
   dbName,
   frequency = '0 0 * * *',
   nbSaved = 14,
@@ -130,6 +29,19 @@ export = function nodeMongoDump({
   withStderr = false,
   withClose = false,
 }: Arguments) {
+  const dump = () => {
+    dumpDb({
+      dbName,
+      nbSaved,
+      host,
+      port,
+      outPath,
+      withStdout,
+      withStderr,
+      withClose,
+    });
+  }
+
   console.table([
     {
       dbName,
@@ -140,5 +52,5 @@ export = function nodeMongoDump({
       outPath,
     },
   ]);
-  cron.schedule(frequency, dumpDb({ host, port, outPath, dbName, nbSaved, withStdout, withStderr, withClose }));
+  cron.schedule(frequency, dump);
 };
