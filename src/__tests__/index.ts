@@ -1,7 +1,7 @@
 import * as dumpDb from '../dumpDb';
 import * as fs from 'fs';
 
-const dbName = 'ice';
+const dbName = 'node-mongo-dump-test';
 
 test('Dump test', async () => {
   const args = {
